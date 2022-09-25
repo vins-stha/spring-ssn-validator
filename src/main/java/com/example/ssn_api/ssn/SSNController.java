@@ -1,6 +1,7 @@
 package com.example.ssn_api.ssn;
 
-import com.example.ssn_api.ssn.errorhandlers.CustomException;
+import com.example.ssn_api.errorhandlers.CustomException;
+//import com.example.ssn_api.ssn.errorhandlers.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
