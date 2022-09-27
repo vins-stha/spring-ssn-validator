@@ -3,12 +3,9 @@ package com.example.ssn_api.forex;
 import org.springframework.beans.factory.annotation.Value;
 
 public class ForexRequestModel {
-    private boolean success;
-    private Query query;
-    private Info info;
-    private String date;
-    private boolean history;
-    private float result;
+    private String from;
+    private String to;
+    private float to_amount;
 //    @Autowired
 //    @Autowired
 
@@ -18,73 +15,44 @@ public class ForexRequestModel {
     public ForexRequestModel (){
     };
 
-    public String getDate() {
-        return date;
+    public ForexRequestModel(String from, String to, float to_amount) {
+        this.from = from;
+        this.to = to;
+        this.to_amount = to_amount;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getFrom() {
+        return from;
     }
 
-    public boolean isHistory() {
-        return history;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public void setHistory(boolean history) {
-        this.history = history;
+    public String getTo() {
+        return to;
     }
 
-    public float getResult() {
-        return result;
+    public void setTo(String to) {
+        this.to = to;
     }
 
-    public void setResult(float result) {
-        this.result = result;
+    public float getTo_amount() {
+        return to_amount;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public void setTo_amount(float to_amount) {
+        this.to_amount = to_amount;
     }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public Query getQueryObject() {
-        return query;
-    }
-
-    public void setQueryObject(Query queryObject) {
-        this.query = queryObject;
-    }
-
-    public Info getInformationObject() {
-        return info;
-    }
-
-    public void setInformationObject(Info informationObject) {
-        this.info = informationObject;
-    }
-
-//    public String getApikey() {
-//        return apikey;
-//    }
-//
-//    public void setApikey(String apikey) {
-//        this.apikey = apikey;
-//    }
 
     @Override
     public String toString() {
         return "ForexRequestModel{" +
-                "date='" + date + '\'' +
-                ", history=" + history +
-                ", result=" + result +
-                ", success=" + success +
-                ", queryObject=" + query +
-                ", informationObject=" + info +
-//                ", apikey='" + apikey + '\'' +
+                "from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", to_amount=" + to_amount +
                 '}';
     }
+
 }
 
