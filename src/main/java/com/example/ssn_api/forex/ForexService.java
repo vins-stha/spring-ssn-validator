@@ -1,11 +1,7 @@
 package com.example.ssn_api.forex;
 
-// import java.util.HashMap;
-// import java.util.Map;
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
@@ -14,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class ForexService {
-    // private final WebClient
     @Autowired
     private WebClient.Builder webClientBuilder;
     @Autowired
