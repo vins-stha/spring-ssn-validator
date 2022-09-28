@@ -1,11 +1,11 @@
 package com.example.ssn_api.forex;
 
-import java.util.HashMap;
-import java.util.Map;
+// import java.util.HashMap;
+// import java.util.Map;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
+// import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
@@ -24,37 +24,36 @@ public class ForexService {
     @Autowired
     ForexRepository forexRepository;
 
-    @Cacheable(value = "rate", key = "{#From, #To}")
-    public Float getExchangeRate(String From, String To) {
+    @Cacheable(value = "rate")
+    public float getExchangeRate(String from, String to) {
         float rate = 0;
         float amount = 124;
-        rate = forexRepository.getExchangeRate(From, To);
-        System.err.println("RATE saved = " + rate);
-        Cache cr_rate = cacheManager.getCache("rate");
+        // if (forexRepository.getExchangeRate(from, to) == null)
+        {
+            String apiResult = webClientBuilder.build()
+                    .get()
+                    .uri("https://api.apilayer.com/exchangerates_data/convert?to=" +
+                            to
+                            + "&from=" + from
+                            + "&amount=" + amount)
+                    .header("apikey", env.getProperty("forex.api_key"))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            try {
+                JSONObject jsonObject = new JSONObject(apiResult);
+                JSONObject infoData = jsonObject.getJSONObject("info");
+                rate = Float.parseFloat(String.valueOf(infoData.get("rate")));
+                // ForexEntity entity = new ForexEntity(from, to, rate);
+                // forexRepository.save(entity);
+                return rate;
 
-        System.out.println("CACHE=" + cr_rate.getClass() + cr_rate.get("{#From, #To}"));
-        String apiResult = webClientBuilder.build()
-                .get()
-                .uri("https://api.apilayer.com/exchangerates_data/convert?to=" +
-                        To
-                        + "&from=" + From
-                        + "&amount=" + amount)
-                .header("apikey", env.getProperty("forex.api_key"))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-        try {
-            JSONObject jsonObject = new JSONObject(apiResult);
-            JSONObject infoData = jsonObject.getJSONObject("info");
-            rate = Float.parseFloat(String.valueOf(infoData.get("rate")));
-
-            return rate;
-
-        } catch (Exception e) {
-            System.out.println("Exception occured" + e.toString());
-            e.printStackTrace();
+            } catch (Exception e) {
+                System.out.println("Exception occured" + e.toString());
+                e.printStackTrace();
+            }
         }
+
         return rate;
     }
 }

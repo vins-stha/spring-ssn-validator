@@ -26,12 +26,27 @@ public class ForexEntity implements Serializable {
     public ForexEntity() {
     };
 
+    public ForexEntity(String from, String to, float rate) {
+        this.from = from;
+        this.to = to;
+        this.rate = rate;
+    }
+
     public float getRate() {
         return rate;
     }
 
     public void setRate(float rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public String toString() {
+        return "ForexRequestModel{" +
+                "from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", rate=" + rate +
+                '}';
     }
 
 }
