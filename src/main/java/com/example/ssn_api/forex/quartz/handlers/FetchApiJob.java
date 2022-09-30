@@ -14,12 +14,16 @@ public class FetchApiJob extends QuartzJobBean {
     @Autowired
     private ForexService forexService;
 
-    static ArrayList<String> CURRENCIES = new ArrayList<String>();
+    ArrayList<String> CURRENCIES = new ArrayList<String>();
 
     public FetchApiJob() {
         CURRENCIES.add("EUR");
         CURRENCIES.add("SEK");
         CURRENCIES.add("USD");
+    }
+
+    public ArrayList<String> getCURRENCIES() {
+        return CURRENCIES;
     }
 
     public FetchApiJob(ForexService forexService) {
