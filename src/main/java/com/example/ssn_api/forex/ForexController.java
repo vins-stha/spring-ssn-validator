@@ -30,7 +30,6 @@ public class ForexController {
 
     @PostMapping(value = "/forex")
     public ResponseEntity<Object> convert() {
-        System.out.println("hello world");
         return new ResponseEntity<>("It works!", HttpStatus.OK);
     }
 
@@ -38,23 +37,21 @@ public class ForexController {
     public Map<String, Object> convertForex(@RequestBody ForexRequestModel requestObject) {
         Map<String, Object> finalResponse = new HashMap<>();
 
+        FetchApiJob apiJob = new FetchApiJob();
+        if (!apiJob.getCURRENCIES().contains(requestObject.getFrom()) || !apiJob.getCURRENCIES().contains(requestObject.getTo())) {
+            throw new RuntimeException("Currency not supported currently");
+        }
+
         try {
             finalResponse.put("from", requestObject.getFrom());
             finalResponse.put("to", requestObject.getTo());
             finalResponse.put("to_amount", requestObject.getTo_amount());
-            FetchApiJob job = new FetchApiJob();
-
-            // System.out
-            // .println("Rate = " + forexService.getExchangeRate(requestObject.getFrom(),
-            // requestObject.getTo()));
-//            System.out.println("Fetched exchange rate =" + forexService.getExchangeRate(requestObject.getFrom(), requestObject.getTo()));
             finalResponse.put("exchange_rate",
                     forexService.getExchangeRate(requestObject.getFrom(), requestObject.getTo()));
-//            ForexEntity entity = forexRepository.getExchangeEntity();
             return finalResponse;
 
         } catch (Exception e) {
-            System.out.println("Exception occured" + e.toString());
+            System.out.println("Exception occurred" + e.toString());
             e.printStackTrace();
         }
 
@@ -65,7 +62,6 @@ public class ForexController {
     @GetMapping("/startJob")
     public ResponseEntity<Void> startScheduledJob() {
         try {
-            System.out.println("Sending the schedluing job now...");
             JobDetail jobDetail = jobDetail();
             Trigger trigger = buildTrigger(jobDetail);
             scheduler.scheduleJob(jobDetail, trigger);
@@ -81,7 +77,6 @@ public class ForexController {
     private JobDetail jobDetail() {
         return JobBuilder.newJob(FetchApiJob.class)
                 .withIdentity(UUID.randomUUID().toString(), "forexfetchapijobs")
-//                .usingJobData(jobData)
                 .storeDurably()
                 .build();
     }
