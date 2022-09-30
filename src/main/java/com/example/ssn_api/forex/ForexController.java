@@ -1,6 +1,8 @@
 package com.example.ssn_api.forex;
 
 // import org.json.JSONObject;
+import com.example.ssn_api.forex.quartz.handlers.FetchApiJob;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,13 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class ForexController {
+
+    // Step 4
+    @Autowired
+    private Scheduler scheduler;
+
+    public ForexController() {
+    }
     @Autowired
     private ForexService forexService;
 
@@ -22,7 +31,6 @@ public class ForexController {
         System.out.println("hello world");
         return new ResponseEntity<>("It works!", HttpStatus.OK);
     }
-
     @GetMapping(value = "/forex")
     public Map<String, Object> convertForex(@RequestBody ForexRequestModel requestObject) {
         Map<String, Object> finalResponse = new HashMap<>();
@@ -45,4 +53,49 @@ public class ForexController {
 
         return finalResponse;
     }
+
+    // Step 5
+    @GetMapping("/startJob")
+    public ResponseEntity<Void> startScheduledJob() {
+       try {
+           System.out.println("Sending the schedluing job now...");
+           JobDetail jobDetail = jobDetail();
+           Trigger trigger = buildTrigger(jobDetail);
+           scheduler.scheduleJob(jobDetail, trigger);
+       }catch (SchedulerException exception) {
+           System.out.println("Error occured while scheduling the job. Message= \n" + exception.getMessage());
+           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+       }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Step 1
+    private JobDetail jobDetail(){
+        return JobBuilder.newJob(FetchApiJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "forexfetchapijobs")
+//                .usingJobData(jobData)
+                .storeDurably()
+                .build();
+
+    }
+    // Step 3
+    private Trigger buildTrigger(JobDetail jobDetail) {
+        return TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().toString() ,"forexfetchapijobs")
+                .withDescription("Fetch api triggers")
+                .startNow()
+                .withSchedule(
+                        SimpleScheduleBuilder.simpleSchedule()
+                                .withIntervalInSeconds(2)
+                                .withRepeatCount(10)
+                                .withMisfireHandlingInstructionFireNow()
+                )
+
+                .build();
+
+    }
+
+
 }
