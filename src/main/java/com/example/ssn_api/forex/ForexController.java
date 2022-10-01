@@ -1,13 +1,9 @@
 package com.example.ssn_api.forex;
 
-// import org.json.JSONObject;
 
 import com.example.ssn_api.SsnApiApplication;
-import com.example.ssn_api.forex.quartz.handlers.FetchApiJob;
 import com.example.ssn_api.forex.quartz.handlers.QuartzSchedulerService;
-import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +17,6 @@ import java.util.*;
 public class ForexController {
 
     // Step 4
-    @Autowired
-    private Scheduler scheduler;
     @Autowired
     private QuartzSchedulerService quartzSchedulerService;
 
@@ -41,7 +35,7 @@ public class ForexController {
     public Map<String, Object> convertForex(@RequestBody ForexRequestModel requestObject) {
         Map<String, Object> finalResponse = new HashMap<>();
 
-        List<String> supportedCurrencies =  Arrays.asList(SsnApiApplication.SUPPORTED_CURRENCIES);
+        List<String> supportedCurrencies =  SsnApiApplication.getSupportedCurrenceis();
 
         if (!supportedCurrencies.contains(requestObject.getFrom()) || !supportedCurrencies.contains(requestObject.getTo())) {
 
@@ -66,13 +60,10 @@ public class ForexController {
 
     // Step 5
     @GetMapping("/startJob")
-//    public ResponseEntity<Void> startScheduledJob() {
     public void startScheduledJob() {
-
         quartzSchedulerService.startScheduledJob();
-        FetchApiJob apiJob = new FetchApiJob();
-        System.out.println(">>>>>CURRENICES ALLOWED=>>>>" + apiJob.getCURRENCIES());
     }
+
 
 
 }

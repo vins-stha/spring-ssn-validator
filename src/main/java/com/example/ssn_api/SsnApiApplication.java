@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication
 @EnableCaching
@@ -25,5 +27,10 @@ public class SsnApiApplication {
 
         SpringApplication.run(SsnApiApplication.class, args);
     }
+
+    public static List<String> getSupportedCurrenceis(){
+      return Arrays.asList(SsnApiApplication.SUPPORTED_CURRENCIES);
+    }
+
 
 }

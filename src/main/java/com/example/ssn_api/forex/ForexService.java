@@ -66,6 +66,7 @@ public class ForexService {
 
             JSONObject jsonObject = new JSONObject(apiResult);
             JSONObject infoData = jsonObject.getJSONObject("info");
+
             return Float.parseFloat(String.valueOf(infoData.get("rate")));
 
         } catch (Exception e) {
