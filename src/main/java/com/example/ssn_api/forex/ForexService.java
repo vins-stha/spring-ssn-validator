@@ -23,7 +23,8 @@ public class ForexService {
     }
 
     @Cacheable(value = "rate")
-    public float getExchangeRate(String from, String to) {
+    public float getExchangeRate(String from, String to) throws InterruptedException {
+        Thread.sleep(5000);
         return forexRepository.getExchangeRate(from, to);
     }
 

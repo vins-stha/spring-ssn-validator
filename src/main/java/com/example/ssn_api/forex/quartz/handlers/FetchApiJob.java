@@ -17,13 +17,13 @@ public class FetchApiJob extends QuartzJobBean {
     ArrayList<String> CURRENCIES = new ArrayList<String>();
 
     public FetchApiJob() {
-        CURRENCIES.add("EUR");
-        CURRENCIES.add("SEK");
-        CURRENCIES.add("USD");
     }
 
     public ArrayList<String> getCURRENCIES() {
         return CURRENCIES;
+    }
+    public void setCURRENCIES(ArrayList<String> supportedCurrencies) {
+        this.CURRENCIES = supportedCurrencies;
     }
 
     public FetchApiJob(ForexService forexService) {
@@ -33,11 +33,14 @@ public class FetchApiJob extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
-        System.out.println("Handling schedulded jobs...");
-
+        ArrayList<String> allowedCurrencies = new ArrayList<String>();
+        allowedCurrencies.add("EUR");
+        allowedCurrencies.add("SEK");
+        allowedCurrencies.add("USD");
+        setCURRENCIES(allowedCurrencies);
+        System.out.println("Allowed currencies " + CURRENCIES);
         for(String from: CURRENCIES){
             for(String to: CURRENCIES) {
-                System.out.println("from" + to + "from" + from);
                 forexService.fetchExchangeRateFromApi(from,to);
             }
         }

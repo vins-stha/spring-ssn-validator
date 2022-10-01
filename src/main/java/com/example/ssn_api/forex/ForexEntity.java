@@ -1,6 +1,7 @@
 package com.example.ssn_api.forex;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "forex_rates")

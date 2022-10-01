@@ -2,7 +2,9 @@ package com.example.ssn_api.forex;
 
 // import org.json.JSONObject;
 
+import com.example.ssn_api.SsnApiApplication;
 import com.example.ssn_api.forex.quartz.handlers.FetchApiJob;
+import com.example.ssn_api.forex.quartz.handlers.QuartzSchedulerService;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.core.env.Environment;
@@ -21,6 +23,8 @@ public class ForexController {
     // Step 4
     @Autowired
     private Scheduler scheduler;
+    @Autowired
+    private QuartzSchedulerService quartzSchedulerService;
 
     public ForexController() {
     }
@@ -37,8 +41,10 @@ public class ForexController {
     public Map<String, Object> convertForex(@RequestBody ForexRequestModel requestObject) {
         Map<String, Object> finalResponse = new HashMap<>();
 
-        FetchApiJob apiJob = new FetchApiJob();
-        if (!apiJob.getCURRENCIES().contains(requestObject.getFrom()) || !apiJob.getCURRENCIES().contains(requestObject.getTo())) {
+        List<String> supportedCurrencies =  Arrays.asList(SsnApiApplication.SUPPORTED_CURRENCIES);
+
+        if (!supportedCurrencies.contains(requestObject.getFrom()) || !supportedCurrencies.contains(requestObject.getTo())) {
+
             throw new RuntimeException("Currency not supported currently");
         }
 
@@ -60,42 +66,12 @@ public class ForexController {
 
     // Step 5
     @GetMapping("/startJob")
-    public ResponseEntity<Void> startScheduledJob() {
-        try {
-            JobDetail jobDetail = jobDetail();
-            Trigger trigger = buildTrigger(jobDetail);
-            scheduler.scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException exception) {
-            System.out.println("Error occured while scheduling the job. Message= \n" + exception.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//    public ResponseEntity<Void> startScheduledJob() {
+    public void startScheduledJob() {
 
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // Step 1
-    private JobDetail jobDetail() {
-        return JobBuilder.newJob(FetchApiJob.class)
-                .withIdentity(UUID.randomUUID().toString(), "forexfetchapijobs")
-                .storeDurably()
-                .build();
-    }
-
-    // Step 3
-    private Trigger buildTrigger(JobDetail jobDetail) {
-        return TriggerBuilder.newTrigger()
-                .forJob(jobDetail)
-                .withIdentity(jobDetail.getKey().toString(), "forexfetchapijobs")
-                .withDescription("Fetch api triggers")
-                .startNow()
-                .withSchedule(
-                        SimpleScheduleBuilder.simpleSchedule()
-                                .withIntervalInSeconds(60)
-                                .withRepeatCount(2)
-                                .withMisfireHandlingInstructionFireNow()
-                )
-
-                .build();
+        quartzSchedulerService.startScheduledJob();
+        FetchApiJob apiJob = new FetchApiJob();
+        System.out.println(">>>>>CURRENICES ALLOWED=>>>>" + apiJob.getCURRENCIES());
     }
 
 

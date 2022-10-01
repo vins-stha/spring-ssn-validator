@@ -8,10 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
+
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
 public class SsnApiApplication {
+    public static String[] SUPPORTED_CURRENCIES = {"SEK", "EUR", "USD"};
 
     @Bean
     public WebClient.Builder getWebClientBuilder() {
