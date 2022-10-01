@@ -4,6 +4,7 @@ package com.example.ssn_api.forex;
 import com.example.ssn_api.SsnApiApplication;
 import com.example.ssn_api.forex.quartz.handlers.QuartzSchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ForexController {
     }
 
     @GetMapping(value = "/forex")
-    public Map<String, Object> convertForex(@RequestBody ForexRequestModel requestObject) {
+    public Map<String, Object> convertForex(@RequestBody ForexRequest requestObject) {
         Map<String, Object> finalResponse = new HashMap<>();
 
         List<String> supportedCurrencies =  SsnApiApplication.getSupportedCurrenceis();
@@ -60,10 +61,9 @@ public class ForexController {
 
     // Step 5
     @GetMapping("/startJob")
+//    @EventListener(ApplicationReadyEvent.class)
+
     public void startScheduledJob() {
         quartzSchedulerService.startScheduledJob();
     }
-
-
-
 }

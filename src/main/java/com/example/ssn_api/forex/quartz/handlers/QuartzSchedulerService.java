@@ -46,11 +46,10 @@ public class QuartzSchedulerService {
                 .startNow()
                 .withSchedule(
                         SimpleScheduleBuilder.simpleSchedule()
-                                .withIntervalInSeconds(120)
-                                .withRepeatCount(2)
+                                .withIntervalInHours(1)
+                                .repeatForever()
                                 .withMisfireHandlingInstructionFireNow()
                 )
-
                 .build();
     }
 }

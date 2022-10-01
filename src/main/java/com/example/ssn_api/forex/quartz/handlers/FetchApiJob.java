@@ -32,13 +32,6 @@ public class FetchApiJob extends QuartzJobBean {
                 forexService.fetchExchangeRateFromApi(from,to);
             }
         }
-
-        printHelloJob();
-
     }
 
-    public void printHelloJob()
-    {
-        System.out.println("Hellow world");
-    }
 }
