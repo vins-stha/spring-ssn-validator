@@ -1,14 +1,14 @@
 package com.example.ssn_api.forex;
 
-public class ForexRequestModel {
+public class ForexRequest {
     private String from;
     private String to;
     private float to_amount;
 
-    public ForexRequestModel() {
+    public ForexRequest() {
     };
 
-    public ForexRequestModel(String from, String to, float to_amount) {
+    public ForexRequest(String from, String to, float to_amount) {
         this.from = from;
         this.to = to;
         this.to_amount = to_amount;
@@ -40,7 +40,7 @@ public class ForexRequestModel {
 
     @Override
     public String toString() {
-        return "ForexRequestModel{" +
+        return "ForexRequest{" +
                 "from='" + from + '\'' +
                 ", to='" + to + '\'' +
                 ", to_amount=" + to_amount +

@@ -23,33 +23,40 @@ public class ForexService {
     }
 
     @Cacheable(value = "rate")
-    public float getExchangeRate(String from, String to) {
+    public float getExchangeRate(String from, String to) throws InterruptedException {
+        Thread.sleep(5000);
         return forexRepository.getExchangeRate(from, to);
     }
 
     public void fetchExchangeRateFromApi(String from, String to) {
-        float rate = fetchApiAndReturnRate(from, to);
+        try {
+            float rate = getRateFromApi(from, to);
 
-        if (forexRepository.getExchangeRate(from, to) == null) {
+            if (forexRepository.getExchangeRate(from, to) == null) {
 
-            System.out.println("Creating new record for pair " + from + "-" + to);
+                System.out.println("Creating new record for pair " + from + "-" + to);
 
-            ForexEntity entity = new ForexEntity(from, to, rate);
-            forexRepository.save(entity);
+                ForexEntity entity = new ForexEntity(from, to, rate);
+                forexRepository.save(entity);
 
-        } else {
-            // Update rate
-            System.out.println("Updating rate data for record for pair " + from + "-" + to);
+            } else {
+                // Update rate
+                System.out.println("Updating rate data for record for pair " + from + "-" + to);
 
-            ForexEntity entity = forexRepository.getExchangeEntity(from, to);
-            entity.setRate(rate);
+                ForexEntity entity = forexRepository.getExchangeEntity(from, to);
+                entity.setRate(rate);
 
-            forexRepository.save(entity);
+                forexRepository.save(entity);
+            }
+        } catch (Exception exception) {
+            System.out.println("Exception occurred " + exception.getMessage());
+            exception.printStackTrace();
+
         }
     }
 
-    private float fetchApiAndReturnRate(String from, String to) {
-        float amount = 124;
+    private float getRateFromApi(String from, String to) {
+        float amount = 1;
         float rate = 0;
         try {
             String apiResult = webClientBuilder.build()
@@ -65,6 +72,7 @@ public class ForexService {
 
             JSONObject jsonObject = new JSONObject(apiResult);
             JSONObject infoData = jsonObject.getJSONObject("info");
+
             return Float.parseFloat(String.valueOf(infoData.get("rate")));
 
         } catch (Exception e) {

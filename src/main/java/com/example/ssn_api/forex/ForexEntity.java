@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "forex_rates")
 public class ForexEntity implements Serializable {
@@ -42,7 +43,7 @@ public class ForexEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "ForexRequestModel{" +
+        return "ForexRequest{" +
                 "from='" + from + '\'' +
                 ", to='" + to + '\'' +
                 ", rate=" + rate +

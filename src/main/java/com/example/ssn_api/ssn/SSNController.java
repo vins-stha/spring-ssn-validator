@@ -26,7 +26,6 @@ public class SSNController {
     public ResponseEntity<Object> validateSSN(@RequestBody SSN ssn) {
         if (!ssn.getCountryCode().toUpperCase().equals("FI")) {
             throw new CustomException("Country not found");
-
         }
 
         // Phase - 1
