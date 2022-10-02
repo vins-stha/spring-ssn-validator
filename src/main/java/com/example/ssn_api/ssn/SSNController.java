@@ -35,7 +35,7 @@ public class SSNController {
         Map<String, Object> finalResponse = new HashMap<>();
 
         // Phase - 1
-        Pattern pattern = Pattern.compile("[0-3][0-9][0-1][1-9][0-9][0-9][-,+,A][002-899]\\d\\d[A-F,H,J-N,P,R-Y,0-9]");
+        Pattern pattern = Pattern.compile("[0-3][0-9][0-1][0-9][0-9][0-9][-,+,A][002-899]\\d\\d[A-F,H,J-N,P,R-Y,0-9]");
         Matcher matcher = pattern.matcher(ssn.getSSN());
 
         if (matcher.find()) {
@@ -54,14 +54,18 @@ public class SSNController {
                 uuuu = "20" + uu;
 
             if (isDateValid(dm + uuuu)) {
-
                 // Check if PIC is valid
                 if (isPICValid((dm + uu + PIC), ctrlchar)) {
-
                     result = true;
                 }
+                else
+                    System.out.println("Invalid PIC");
             }
+            else
+                System.out.println("Invalid date");
         }
+        else
+            System.out.println("Invalid pattern");
 
         finalResponse.put("ssn_valid", result);
 
