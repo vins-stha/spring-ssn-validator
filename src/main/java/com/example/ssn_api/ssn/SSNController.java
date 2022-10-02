@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,55 +18,54 @@ import java.util.regex.Pattern;
 @RequestMapping("/api")
 
 public class SSNController {
-    @GetMapping(value = "/ssnValidate")
+    @GetMapping(value = "/validateSSN")
     public ResponseEntity<Object> validate() {
         System.out.println("hello world");
         return new ResponseEntity<>("It works!", HttpStatus.OK);
     }
 
-    @PostMapping(value = "/ssnValidate")
+    @PostMapping(value = "/validateSSN")
     public ResponseEntity<Object> validateSSN(@RequestBody SSN ssn) {
+        boolean result = false;
+
         if (!ssn.getCountryCode().toUpperCase().equals("FI")) {
-            throw new CustomException("Country not found");
+            throw new CustomException("Country not supprted");
         }
+
+        Map<String, Object> finalResponse = new HashMap<>();
 
         // Phase - 1
         Pattern pattern = Pattern.compile("[0-3][0-9][0-1][1-9][0-9][0-9][-,+,A][002-899]\\d\\d[A-F,H,J-N,P,R-Y,0-9]");
         Matcher matcher = pattern.matcher(ssn.getSSN());
 
-        // Phase - I check pattern
-        if (!matcher.find()) {
-            throw new CustomException("Invalid SSN Pattern");
-        }
+        if (matcher.find()) {
+            String dm = ssn.getSSN().substring(0, 4);
+            String uu = ssn.getSSN().substring(4, 6);
+            String separator = ssn.getSSN().substring(6, 7);
+            String PIC = ssn.getSSN().substring(7, 10);
+            String ctrlchar = ssn.getSSN().substring(10);
+            String uuuu = "";
 
-        String dm = ssn.getSSN().substring(0, 4);
-        String uu = ssn.getSSN().substring(4, 6);
-        String separator = ssn.getSSN().substring(6, 7);
-        String PIC = ssn.getSSN().substring(7, 10);
-        String ctrlchar = ssn.getSSN().substring(10);
-        String uuuu = "";
+            if (separator.equals("-"))
+                uuuu = "19" + uu;
+            if (separator.equals("+"))
+                uuuu = "18" + uu;
+            if (separator.equals("A"))
+                uuuu = "20" + uu;
 
-        if (separator.equals("-"))
-            uuuu = "19" + uu;
-        if (separator.equals("+"))
-            uuuu = "18" + uu;
-        if (separator.equals("A"))
-            uuuu = "20" + uu;
+            if (isDateValid(dm + uuuu)) {
 
-        // Check if date is valid
-        if (!isDateValid(dm + uuuu)) {
-            throw new CustomException("Invalid Date");
-        }
+                // Check if PIC is valid
+                if (isPICValid((dm + uu + PIC), ctrlchar)) {
 
-        if (isDateValid(dm + uuuu)) {
-            // Check if PIC is valid
-            if (!isPICValid((dm + uu + PIC), ctrlchar)) {
-                throw new CustomException("Invalid Personal Identity Code.");
+                    result = true;
+                }
             }
-            System.out.println("Is valid SSN");
         }
 
-        return new ResponseEntity<>("Valid SSN", HttpStatus.OK);
+        finalResponse.put("ssn_valid", result);
+
+        return new ResponseEntity<>(finalResponse, HttpStatus.OK);
     }
 
     public boolean isDateValid(String date) {
@@ -76,11 +77,11 @@ public class SSNController {
             result = true;
 
         } catch (DateTimeParseException e) {
+            System.out.println("Invalid date. " + e.getLocalizedMessage());
             e.printStackTrace();
-            result = false;
         }
-        return result;
 
+        return result;
     }
 
     public boolean isPICValid(String nums, String pic) {
@@ -98,6 +99,5 @@ public class SSNController {
             return true;
         else
             return false;
-
     }
 }
