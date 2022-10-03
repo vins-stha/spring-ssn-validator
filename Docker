@@ -1,5 +1,0 @@
-FROM openjdk:8-jdk-alpine
-RUN addgroup -S spring && addusesr -S spring
-EXPOSE 8080
-USER spring:spring
-ADD target/ssn_api.jar ssn_api.jar
