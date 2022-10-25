@@ -29,6 +29,7 @@ public class QuartzSchedulerService {
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     private JobDetail jobDetail() {
         return JobBuilder.newJob(FetchApiJob.class)
                 .withIdentity(UUID.randomUUID().toString(), "forexfetchapijobs")

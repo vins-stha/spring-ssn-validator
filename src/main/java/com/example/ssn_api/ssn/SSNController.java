@@ -29,7 +29,7 @@ public class SSNController {
         boolean result = false;
 
         if (!ssn.getCountryCode().toUpperCase().equals("FI")) {
-            throw new CustomException("Country not supprted");
+            throw new CustomException("Country not supported");
         }
 
         Map<String, Object> finalResponse = new HashMap<>();

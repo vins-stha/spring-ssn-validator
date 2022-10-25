@@ -61,7 +61,6 @@ public class ForexController {
 
     // Step 5
     @GetMapping("/startJob")
-//    @EventListener(ApplicationReadyEvent.class)
 
     public void startScheduledJob() {
         quartzSchedulerService.startScheduledJob();

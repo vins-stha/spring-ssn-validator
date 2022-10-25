@@ -31,7 +31,7 @@ public class ForexService {
     public void fetchExchangeRateFromApi(String from, String to) {
         try {
             float rate = getRateFromApi(from, to);
-
+            System.out.println("IS empty=" + forexRepository.getExchangeRate(from, to));
             if (forexRepository.getExchangeRate(from, to) == null) {
 
                 System.out.println("Creating new record for pair " + from + "-" + to);
@@ -59,6 +59,7 @@ public class ForexService {
         float amount = 1;
         float rate = 0;
         try {
+//            System.out.println("ENV=>" + env.getProperty("forex.api_key"));
             String apiResult = webClientBuilder.build()
                     .get()
                     .uri("https://api.apilayer.com/exchangerates_data/convert?to=" +
@@ -69,6 +70,7 @@ public class ForexService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+            System.out.println("FETCH Result = " + apiResult);
 
             JSONObject jsonObject = new JSONObject(apiResult);
             JSONObject infoData = jsonObject.getJSONObject("info");
@@ -76,7 +78,7 @@ public class ForexService {
             return Float.parseFloat(String.valueOf(infoData.get("rate")));
 
         } catch (Exception e) {
-            System.out.println("Exception occurred while fetching from api" + e.toString());
+            System.out.println("Exception occurred while fetching from api " + e.toString());
             e.printStackTrace();
         }
         return rate;
